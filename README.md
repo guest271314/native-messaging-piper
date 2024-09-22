@@ -88,7 +88,9 @@ someone who doesn't want you to be correct.
 });
 
 tts.stream().then(console.log).catch(console.error);
+```
 
+```
 var tts = new Piper({
   voice: "female",
   text: `"So we need people to have weird new
@@ -120,6 +122,10 @@ Or explicitly set the reason
 ```
 tts.abort("Cancel");
 ```
+
+### Examples
+
+Example `rhasspy/piper` and `diffusion-syduios` TTS audio output files are located in this repository at `en_US-hfc_male-medium.wav` and `en_US-hfc_female-medium.wav`.
 
 ### License
 
