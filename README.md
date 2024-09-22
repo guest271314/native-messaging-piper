@@ -5,7 +5,7 @@
 Web Speech API does not define the capability to capture the audio output
 of `window.speechSyntehsis.speak()` to a `MediaStream` or `ArrayBuffer` 
 ([`MediaStream`, `ArrayBuffer`, `Blob` audio result from speak() for recording?](https://lists.w3.org/Archives/Public/public-speech-api/2017Jun/0000.html)), 
-and is not integrated with Web Audio API ([web audio api connected to speech api #1764](https://github.com/WebAudio/web-audio-api/issues/1764)(https://github.com/WebAudio/web-audio-api/issues/1764)).
+and is not integrated with Web Audio API ([web audio api connected to speech api #1764](https://github.com/WebAudio/web-audio-api/issues/1764))).
 
 Use Transferable Streams ([Transferable Streams Explained](https://github.com/whatwg/streams/blob/main/transferable-streams-explainer.md), [Transferable objects](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Transferable_objects), [Feature: Streams API: transferable streams](https://chromestatus.com/feature/5298733486964736)()), 
 `MediaStream` ([Media Capture and Streams](https://www.w3.org/TR/mediacapture-streams/)), Insertable Streams ([MediaStreamTrack Insertable Media Processing using Streams](https://www.w3.org/TR/mediacapture-transform/), [Insertable streams for MediaStreamTrack](https://developer.chrome.com/docs/capabilities/web-apis/mediastreamtrack-insertable-media-processing)), byte streams,
@@ -15,7 +15,7 @@ subprocess streams from Node.js ([Child process](https://nodejs.org/api/child_pr
 Native Messaging ([[Chrome Developers](https://developer.chrome.com/docs/extensions/mv3/nativeMessaging/)
 , [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Native_messaging)
 , [Microsoft Edge Developer documentation](https://learn.microsoft.com/en-us/microsoft-edge/extensions-chromium/developer-guide/native-messaging)
-, [Messaging between the app and JavaScript in a Safari web extension]), write the data to a `MediaStreamTrackGenerator` for the
+, [Messaging between the app and JavaScript in a Safari web extension](https://developer.apple.com/documentation/safariservices/messaging-between-the-app-and-javascript-in-a-safari-web-extension)), write the data to a `MediaStreamTrackGenerator` for the
 capability to play back share the stream to speakers or headphones, record,
 and with peers over a WebRTC `RTCPeerConnection` or `RTCDataChannel` ([WebRTC: Real-Time Communication in Browsers](https://www.w3.org/TR/webrtc/)).
 
