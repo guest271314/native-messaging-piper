@@ -1,0 +1,7 @@
+{
+  "name": "nm_piper",
+  "description": "piper TTS Native Messaging host",
+  "path": "",
+  "type": "stdio",
+  "allowed_origins": []
+}

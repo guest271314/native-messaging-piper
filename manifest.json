@@ -1,0 +1,33 @@
+{
+  "name": "nm-piper",
+  "short_name": "nm_piper",
+  "description": "piper TTS Native Messaging host",
+  "version": "1.0",
+  "manifest_version": 3,
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "permissions": [
+    "nativeMessaging",
+    "tabs",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "*.html",
+        "*.js"
+      ],
+      "matches": [
+        "<all_urls>"
+      ],
+      "extensions": []
+    }
+  ],
+  "action": {}
+}
