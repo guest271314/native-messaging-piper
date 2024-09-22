@@ -34,6 +34,12 @@ node install_piper.js # Or deno -A install_piper.js, bun does not support Decomp
 node_istall_host.js # Or deno -A install_host.js, bun run install_host.js
 ```
 
+To programmatically install the Web extension launch Chrome with
+
+```
+chrome --load-extension=/absolute/path/to/native-messaging-piper
+```
+
 #### Manual installation
 
 1. Navigate to `chrome://extensions`.
