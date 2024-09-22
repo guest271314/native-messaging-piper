@@ -96,10 +96,15 @@ async function exec(args) {
       // Verify AudioContext state is closed on abort or complete
       this.ac.onstatechange = (e) =>
         console.log(`${e.target.constructor.name}.state ${e.target.state}`);
+      // Use OscillatorNode to produce silence becuase MediaStreamTracxk of kind
+      // audio does not produce silence per W3C Media Capture and Streams on Chrome
+      // https://issues.chromium.org/issues/40799779.
       this.osc = new OscillatorNode(this.ac, {
         frequency: this.frequency,
         channelCount: this.channelCount,
       });
+      // Should render silence per W3C Media Capture and Streams,
+      // doesn't render silence on Chrome - without source input connected.
       this.msd = new MediaStreamAudioDestinationNode(this.ac, {
         channelCount: this.channelCount,
       });
