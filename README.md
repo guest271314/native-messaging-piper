@@ -114,7 +114,7 @@ To abort the audio playback and stream that sends data to the arbitrary Web page
 using Trasnferable Stream
 
 ```
-tts.abort(); // Default parameter to abort is "stream aborted" 
+tts.abort(); // Default parameter to abort is "Stream aborted." 
 ```
 
 Or explicitly set the reason 
