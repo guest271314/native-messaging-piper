@@ -272,7 +272,6 @@ async function exec(args) {
             },
             close: () => {
               console.log("Output stream closed.");
-              this.track.stop();
               // Remove Web extension injected HTML iframe.
               // Used for messaging data from piper with Native Messaging protocol
               // to TransformStream where the readable side is transferred to
