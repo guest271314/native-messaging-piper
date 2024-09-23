@@ -199,10 +199,10 @@ async function exec(args) {
               let silence = new AudioData({
                 sampleRate: this.sampleRate,
                 numberOfChannels: this.numberOfChannels,
-                numberOfFrames: this.numberOfFrames * 2,
+                numberOfFrames: this.numberOfFrames,
                 format: this.format,
                 timestamp: 0,
-                data: new Uint8Array(this.byteLength * 2),
+                data: new Uint8Array(this.byteLength),
               });
               // console.log(silence.duration/10**6);
               await this.audioWriter.write(silence);
