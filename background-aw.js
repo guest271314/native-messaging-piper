@@ -80,10 +80,6 @@ function exec(args) {
       this.msn = new MediaStreamAudioSourceNode(this.ac, {
         mediaStream: this.mediaStream,
       });
-      this.osc = new OscillatorNode(this.ac, {
-        frequency: 0,
-        channelCount: this.channelCount,
-      });
       this.msn.connect(this.ac.destination);
     }
     // Remove iframe when done streaming, stream aborted, or error, exception.
