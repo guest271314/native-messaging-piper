@@ -19,6 +19,8 @@ Native Messaging ([Chrome Developers](https://developer.chrome.com/docs/extensio
 capability to play back share the stream to speakers or headphones, record,
 and with peers over a WebRTC `RTCPeerConnection` or `RTCDataChannel` ([WebRTC: Real-Time Communication in Browsers](https://www.w3.org/TR/webrtc/)).
 
+`background-aw.js` is a Web Audio API [`AudioWorklet`](https://webaudio.github.io/web-audio-api/#AudioWorklet) version of `background.js` Media Capture Transform `MediaStreamTrackGenerator` version, where Web Audio API is also used.
+
 ### Installation
 
 Clone repository, then fetch `piper` `.tar.gz` release; extract contents with 
@@ -120,13 +122,13 @@ To abort the audio playback and stream that sends data to the arbitrary Web page
 using Trasnferable Stream
 
 ```
-tts.abort(); // Default parameter to abort is "Stream aborted." 
+piper.abort(); // Default parameter to abort is "Stream aborted." 
 ```
 
 Or explicitly set the reason 
 
 ```
-tts.abort("Cancel");
+piper.abort("Cancel");
 ```
 
 ### Examples
