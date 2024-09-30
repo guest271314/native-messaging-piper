@@ -177,7 +177,7 @@ function exec(args) {
             this.removeFrame();
             console.log("Input stream done.");
           },
-          abort: (reason) => {
+          abort: async (reason) => {
             await this.ac.suspend();
             this.track.stop();
             this.aw.disconnect();
