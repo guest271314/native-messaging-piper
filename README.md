@@ -5,7 +5,7 @@
 Web Speech API does not define the capability to capture the audio output
 of `window.speechSyntehsis.speak()` to a `MediaStream` or `ArrayBuffer` 
 ([`MediaStream`, `ArrayBuffer`, `Blob` audio result from speak() for recording?](https://lists.w3.org/Archives/Public/public-speech-api/2017Jun/0000.html)), 
-and is not integrated with Web Audio API ([web audio api connected to speech api #1764](https://github.com/WebAudio/web-audio-api/issues/1764))).
+and is not integrated with Web Audio API ([web audio api connected to speech api #1764](https://github.com/WebAudio/web-audio-api/issues/1764)).
 
 Use Transferable Streams ([Transferable Streams Explained](https://github.com/whatwg/streams/blob/main/transferable-streams-explainer.md), [Transferable objects](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Transferable_objects), [Feature: Streams API: transferable streams](https://chromestatus.com/feature/5298733486964736)), 
 `MediaStream` ([Media Capture and Streams](https://www.w3.org/TR/mediacapture-streams/)), Insertable Streams ([MediaStreamTrack Insertable Media Processing using Streams](https://www.w3.org/TR/mediacapture-transform/), [Insertable streams for MediaStreamTrack](https://developer.chrome.com/docs/capabilities/web-apis/mediastreamtrack-insertable-media-processing)), byte streams,
@@ -79,7 +79,7 @@ The double quotes in template literal are necessary; the Native Messaging protoc
 uses JSON over IPC between the spawned host (`nm_piper.js`) and the browser.
 
 ```
-var tts = new Piper({
+var piper = new Piper({
   voice: "male",
   text: `"Now watch. ..., this how science works.
 One researcher comes up with a result.
@@ -93,11 +93,11 @@ someone who doesn't want you to be correct.
 - Neil deGrasse Tyson, May 3, 2017 at 92nd Street Y"`.replace(/\n/g, " "),
 });
 
-tts.stream().then(console.log).catch(console.error);
+piper.stream().then(console.log).catch(console.error);
 ```
 
 ```
-var tts = new Piper({
+var piper = new Piper({
   voice: "female",
   text: `"So we need people to have weird new
 ideas. We need more ideas to break it
@@ -110,7 +110,7 @@ Use it. Break it. File bugs. Request features.
   servers or plugins!"`.replace(/\n/g, " "),
 });
 
-tts.stream().then(console.log).catch(console.error);
+piper.stream().then(console.log).catch(console.error);
 ```
 
 The `Piper` instance exposes a `mediaStream` property that is a live `MediaStream`
