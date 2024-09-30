@@ -267,7 +267,6 @@ function exec(args) {
       // Post SharedArrayBuffer to AudioWorkeltProcessor scope.
       this.aw.port.postMessage(this.sab);
       this.aw.connect(this.msd);
-      this.msn.connect(this.ac.destination);
       this.aw.onprocessorerror = (e) => {
         console.error(e, "processorerror");
         console.trace();
