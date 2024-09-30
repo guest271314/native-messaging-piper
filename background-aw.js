@@ -56,7 +56,6 @@ function exec(args) {
       // Web Audio API
       this.latencyHint = 0;
       this.channelCount = 1;
-      // Media Capture Transform MediaStreamTrackGenerator
       // 1 channel s16 PCM, interleaved
       this.sampleRate = 22050;
       // WebCodecs AudioData formats
