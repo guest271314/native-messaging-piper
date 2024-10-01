@@ -274,15 +274,14 @@ function exec(args) {
       const { resolve: result, promise: endOfStream } = Promise.withResolvers();
       this.aw.port.onmessage = async (e) => {
         // Try avoiding pop at end of stream without another AudioNode.
-        await scheduler.postTask(async () => {}, {
+        await scheduler.postTask(async () => await this.ac.suspend(), {
           delay: this.ac.playoutStats.maximumLatency,
           priority: "background",
-        });
-        await this.ac.suspend();
-        this.track.stop();
-        this.aw.disconnect();
+        }); 
+        this.msn.disconnect(); 
+        this.track.stop();      
         this.msd.disconnect();
-        this.msn.disconnect();
+        this.aw.disconnect();
         result({
           bytes: this.bytes,
           ...e.data,
