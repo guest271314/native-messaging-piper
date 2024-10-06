@@ -1,8 +1,8 @@
 // https://github.com/guest271314/native-messaging-piper
 // Web Audio API AudioWorklet version
-// SharedArrayBuffer, Web Audio API, subprocess streams from Node.js, Deno, Bun
-// to local rhasspy/piper with Native Messaging for real-time local text-to-speech
-// streaming in Chrome browser
+// ReadableStream, resizable ArrayBuffer, Web Audio API, subprocess streams from 
+// Node.js, Deno, Bun to local rhasspy/piper with Native Messaging for real-time 
+// local text-to-speech streaming in Chrome browser
 
 // Inject script when chrome.runtime is installed and reloaded,
 // when tabs are created and updated
@@ -56,11 +56,10 @@ function exec(args) {
       // Web Audio API
       this.latencyHint = 0;
       this.channelCount = 1;
+      this.numberOfInputs = 1;
+      this.numberOfOutputs = 1;
       // 1 channel s16 PCM, interleaved
       this.sampleRate = 22050;
-      // WebCodecs AudioData formats
-      this.inputFormat = "s16";
-      this.outputFormat = "f32";
       // AbortController to abort streams and audio playback
       this.abortable = new AbortController();
       this.signal = this.abortable.signal;
@@ -70,8 +69,10 @@ function exec(args) {
         sampleRate: this.sampleRate,
       });
       // Verify AudioContext state is closed on abort or complete
-      this.ac.onstatechange = (e) =>
+      // bytes in transferableStream.js, readOffset in AudioWorkletProcessor
+      this.ac.addEventListener("statechange", (e) => {
         console.log(`${e.target.constructor.name}.state ${e.target.state}`);
+      }, { once: true });
       this.msd = new MediaStreamAudioDestinationNode(this.ac, {
         channelCount: this.channelCount,
       });
@@ -118,115 +119,88 @@ function exec(args) {
       this.transferableWindow.src =
         `${this.url.href}?${this.params.toString()}`;
       document.body.appendChild(this.transferableWindow);
-      this.readable = await this.promise;
+      this.readable = (await this.promise).pipeThrough(new TransformStream(), {
+        signal: this.signal,
+      });
       if ((!this.readable) instanceof ReadableStream) {
         return this.abort();
       }
-      // Store byte from Uint8Array that is greater than an even length.
-      let overflow = null;
-      this.sab = new SharedArrayBuffer(0, {
-        maxByteLength: (1024 ** 2) * 2,
-      });
-      this.view = new DataView(this.sab);
-      // Convert 1 channel, S16_LE PCM as Uint8Array
-      // to Float32Array, write to SharedArrayBuffer.
-      const stream = this.readable.pipeTo(
-        new WritableStream({
-          write: (u8) => {
-            this.bytes += u8.length;
-            if (overflow) {
-              u8 = new Uint8Array([overflow, ...u8]);
-              overflow = null;
-            }
-            if (u8.length % 2 !== 0) {
-              [overflow] = u8.subarray(-1);
-              u8 = u8.subarray(0, u8.length - 1);
-              overflow = null;
-            }
-            const ad = new AudioData({
-              sampleRate: 22050,
-              numberOfChannels: 1,
-              numberOfFrames: u8.length / 2,
-              timestamp: 0,
-              format: this.inputFormat,
-              data: u8,
-            });
-            const ab = new ArrayBuffer(ad.allocationSize({
-              planeIndex: 0,
-              format: this.outputFormat,
-            }));
-            ad.copyTo(ab, {
-              planeIndex: 0,
-              format: this.outputFormat,
-            });
-            const floats = new Float32Array(ab);
-            for (let i = 0; i < floats.length; i++) {
-              const offset = .75 * this.sab.byteLength;
-              this.sab.grow(
-                this.sab.byteLength + Float32Array.BYTES_PER_ELEMENT,
-              );
-              this.view.setFloat32(offset, floats[i]);
-            }
-          },
-          close: () => {
-            this.removeFrame();
-            console.log("Input stream done.");
-          },
-          abort: async (reason) => {
-            await this.ac.suspend();
-            this.track.stop();
-            this.aw.disconnect();
-            this.msd.disconnect();
-            this.msn.disconnect();
-            console.log(reason);
-          },
-        }),
-        { signal: this.signal },
-      ).then(() => " piper TTS: End of stream.").catch((e) => e);
       // AudioWorklet
       class AudioWorkletProcessor {}
-      class SharedMemoryAudioWorkletStream extends AudioWorkletProcessor {
+      class ResizableArrayBufferAudioWorkletStream
+        extends AudioWorkletProcessor {
         constructor(_options) {
           super();
-          this.offset = 0;
+          this.readOffset = 0;
+          this.writeOffset = 0;
           this.endOfStream = false;
+          this.ab = new ArrayBuffer(0, {
+            maxByteLength: (1024 ** 2) * 4,
+          });
+          this.u8 = new Uint8Array(this.ab);
           this.port.onmessage = (e) => {
-            this.sab = e.data;
-            this.view = new DataView(this.sab);
+            this.readable = e.data;
+            this.stream();
           };
+        }
+        int16ToFloat32(u16, channel) {
+          for (const [i, int] of u16.entries()) {
+            const float = int >= 0x8000
+              ? -(0x10000 - int) / 0x8000
+              : int / 0x7fff;
+            channel[i] = float;
+          }
+        }
+        async stream() {
+          try {
+            for await (const u8 of this.readable) {
+              const { length } = u8;
+              this.ab.resize(this.ab.byteLength + length);
+              this.u8.set(u8, this.readOffset);
+              this.readOffset += length;
+            }
+            console.log("Input strean closed.");
+          } catch (e) {
+            this.ab.resize(0);
+            this.port.postMessage({
+              currentTime,
+              currentFrame,
+              readOffset: this.readOffset,
+              writeOffset: this.writeOffset,
+              e,
+            });
+          }
         }
         process(_, [
           [output],
         ]) {
-          if (
-            this.sab.byteLength > 0 && this.offset >= this.sab.byteLength
-          ) {
-            if (!this.endOfStream) {
+          if (this.writeOffset > 0 && this.writeOffset >= this.readOffset) {
+            if (this.endOfStream === false) {
+              console.log("Output stream closed.");
               this.endOfStream = true;
+              this.ab.resize(0);
               this.port.postMessage({
                 currentTime,
                 currentFrame,
-                byteLength: this.sab.byteLength,
-                offset: this.offset,
+                readOffset: this.readOffset,
+                writeOffset: this.writeOffset,
               });
             }
-            return true;
           }
-          if (this.offset < this.sab.byteLength) {
-            const floats = new Float32Array(128);
-            loop: for (let i = 0; i < floats.length; i++, this.offset += 3) {
-              if ((this.offset + 3) >= this.sab.byteLength) {
-                do {
-                  floats[i++] = this.view.getUint8(this.offset++);
-                } while (this.offset < this.sab.byteLength);
-                break loop;
-              }
-              floats[i] = this.view.getFloat32(this.offset);
+          if (this.readOffset > 256 && this.writeOffset < this.readOffset) {
+            if (this.writeOffset === 0) {
+              console.log("Start output stream.");
             }
-            output.set(floats);
-            return true;
+            const u8 = Uint8Array.from(
+              { length: 256 },
+              () =>
+                this.writeOffset > this.readOffset
+                  ? 0
+                  : this.u8[this.writeOffset++],
+            );
+            const u16 = new Uint16Array(u8.buffer);
+            this.int16ToFloat32(u16, output);
           }
-          output.set(new Float32Array(128));
           return true;
         }
       }
@@ -239,8 +213,8 @@ function exec(args) {
       const worklet = URL.createObjectURL(
         new Blob([
           registerProcessor(
-            "shared-memory-audio-worklet-stream",
-            SharedMemoryAudioWorkletStream,
+            "resizable-arraybuffer-audio-worklet-stream",
+            ResizableArrayBufferAudioWorkletStream,
           ),
         ], { type: "text/javascript" }),
       );
@@ -250,22 +224,19 @@ function exec(args) {
       try {
         this.aw = new AudioWorkletNode(
           this.ac,
-          "shared-memory-audio-worklet-stream",
+          "resizable-arraybuffer-audio-worklet-stream",
           {
-            numberOfInputs: 1,
-            numberOfOutputs: 1,
-            channelCount: 1,
+            numberOfInputs: this.numberOfInputs,
+            numberOfOutputs: this.numberOfOutputs,
+            channelCount: this.channelCount,
           },
         );
       } catch (e) {
         console.log(e);
-        if (this.signal.aborted) {
-          throw this.signal.reason;
-        }
         throw e;
       }
-      // Post SharedArrayBuffer to AudioWorkeltProcessor scope.
-      this.aw.port.postMessage(this.sab);
+      // Transfer ReadableStream to AudioWorkeltProcessor scope.
+      this.aw.port.postMessage(this.readable, [this.readable]);
       this.aw.connect(this.msd);
       this.aw.onprocessorerror = (e) => {
         console.error(e, "processorerror");
@@ -273,20 +244,19 @@ function exec(args) {
       };
       const { resolve: result, promise: endOfStream } = Promise.withResolvers();
       this.aw.port.onmessage = async (e) => {
-        // Avoid pop at end of stream without another AudioNode.
-        await scheduler.postTask(async () => {}, {
-          delay: this.ac.playoutStats.maximumLatency * 4,
-          priority: "background",
-        }); 
-
-        result({
-          bytes: this.bytes,
-          ...e.data,
-          ...this.ac.playoutStats.toJSON(),
-        });
+        this.ac.addEventListener("statechange", (event) => {
+          console.log(
+            `${event.target.constructor.name}.state ${event.target.state}`,
+          );
+          result({
+            ...e.data,
+            ...this.ac.playoutStats.toJSON(),
+          });
+        }, { once: true });
+        await this.ac.close();
       };
-      return Promise.allSettled([stream, endOfStream]).finally(
-        () => (this.removeFrame(), this.ac.close()),
+      return endOfStream.finally(
+        () => (this.removeFrame()),
       );
     }
   };
