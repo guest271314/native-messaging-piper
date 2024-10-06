@@ -94,8 +94,10 @@ async function exec(args) {
         sampleRate: this.sampleRate,
       });
       // Verify AudioContext state is closed on abort or complete
-      this.ac.onstatechange = (e) =>
+      // bytes in transferableStream.js, readOffset in AudioWorkletProcessor
+      this.ac.addEventListener("statechange", (e) => {
         console.log(`${e.target.constructor.name}.state ${e.target.state}`);
+      }, { once: true });
       // Use OscillatorNode to produce silence becuase MediaStreamTracxk of kind
       // audio does not produce silence per W3C Media Capture and Streams on Chrome
       // https://issues.chromium.org/issues/40799779.
@@ -287,7 +289,20 @@ async function exec(args) {
           bytes: this.bytes,
           extraBytes: this.extraBytes,
         })),
-      ]).finally(() => Promise.all([this.ac.close(), this.removeFrame()]));
+      ]).finally(() =>
+        Promise.all([
+          new Promise(async (resolve) => {
+            this.ac.addEventListener("statechange", (event) => {
+              console.log(
+                `${event.target.constructor.name}.state ${event.target.state}`,
+              );
+              resolve();
+            }, { once: true });
+            await this.ac.close();
+          }),
+          this.removeFrame(),
+        ])
+      );
     }
   };
   return;
