@@ -32,8 +32,8 @@ user data directory.
 ```
 git clone https://github.com/guest271314/native-messaging-piper
 cd native-messaging-piper
-node install_piper.js # Or deno -A install_piper.js, bun does not support DecompressionStream
-node_istall_host.js # Or deno -A install_host.js, bun run install_host.js
+deno -A install_piper.js # Or node install_piper.js, bun does not support DecompressionStream
+deno -A install_host.js # Or node install_host.js, bun run install_host.js
 ```
 
 To programmatically install the Web extension launch Chrome with
