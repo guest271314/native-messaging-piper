@@ -133,7 +133,7 @@ piper.abort("Cancel");
 
 ### Examples
 
-Example `rhasspy/piper` and `diffusion-syduios` TTS audio output files are located in this repository at `en_US-hfc_male-medium.wav` and `en_US-hfc_female-medium.wav`.
+Example `rhasspy/piper` and `diffusion-studios` TTS audio output files are located in this repository at `en_US-hfc_male-medium.wav` and `en_US-hfc_female-medium.wav`.
 
 ### License
 
