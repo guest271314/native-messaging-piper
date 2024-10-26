@@ -58,7 +58,7 @@ chrome --load-extension=/absolute/path/to/native-messaging-piper
 The default voices fetched from [diffusionstudio/piper-voices](https://huggingface.co/diffusionstudio/piper-voices/tree/main)
 in `install_piper.js`, where additional voices are listed, are `en_US-hfc_female-medium`, and `en_US-hfc_male-medium` 
 corresponding to `"male"` and `"female"` passed to `Piper` constructor.
-Addjust accordingly to change voices downloaded from Hugging Faces and available in `install_piper.js`
+Adjust accordingly to change voices downloaded from Hugging Faces and available in `install_piper.js`
 at 
 
 ```
