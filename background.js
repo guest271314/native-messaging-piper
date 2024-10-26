@@ -86,7 +86,7 @@ async function exec(args) {
           return this.bytestreamController = c;
         },
       });
-      // Readable byttestream reader
+      // Readable byte stream reader
       this.reader = new ReadableStreamBYOBReader(this.bytestream);
       // Web Audio API BaseAudioContext
       this.ac = new AudioContext({
