@@ -36,11 +36,6 @@ host.path = `${dirname}/${manifest.short_name}.js`;
 host.type = "stdio";
 host.allowed_origins = [];
 host.allowed_origins.push(`chrome-extension://${id}/`);
-host.allowed_origins.push(
-  `chrome-extension://${await generateIdForPath(
-    `${dirname.slice(0, dirname.lastIndexOf("/"))}/tab`,
-  )}/`,
-);
 
 chmodSync(host.path, 0o764);
 console.log(`${host.path} set to executable.`);
