@@ -56,7 +56,7 @@ async function exec(args) {
       // Verify bytes in arbitrary Web page is equal to bytes
       // written to WritableStreamDefaultWriter in extension injected iframe.
       this.bytes = 0;
-      // Count extra bytes used for silece to avoid clipping at start, end of stream.
+      // Count extra bytes used for silence to avoid clipping at start, end of stream.
       this.extraBytes = 0;
       // Web Audio API
       this.latencyHint = 0;
@@ -98,7 +98,7 @@ async function exec(args) {
       this.ac.addEventListener("statechange", (e) => {
         console.log(`${e.target.constructor.name}.state ${e.target.state}`);
       }, { once: true });
-      // Use OscillatorNode to produce silence becuase MediaStreamTracxk of kind
+      // Use OscillatorNode to produce silence becuase MediaStreamTrack of kind
       // audio does not produce silence per W3C Media Capture and Streams on Chrome
       // https://issues.chromium.org/issues/40799779.
       this.osc = new OscillatorNode(this.ac, {
@@ -112,7 +112,7 @@ async function exec(args) {
       });
       [this.track] = this.msd.stream.getAudioTracks();
       // Get timestamp from WebCodecs AudioData produced by silence stream
-      // from OscillatorNode to MediaStreamAudioDestinationNode
+      // from OscillatorNode connected to MediaStreamAudioDestinationNode
       this.processor = new MediaStreamTrackProcessor({
         track: this.track,
       });
@@ -275,9 +275,9 @@ async function exec(args) {
             close: () => {
               console.log("Output stream closed.");
               // Remove Web extension injected HTML iframe.
-              // Used for messaging data from piper with Native Messaging protocol
-              // to TransformStream where the readable side is transferred to
-              // the Web page and read
+              // Used for messaging data from piper with Native Messaging protocol as Array
+              // written to TransformStreamDefaultController as Uint8Array where the readable 
+              // side is transferred to the Web page and read
               this.removeFrame();
             },
             // Handle this.abortable.abort("reason");
