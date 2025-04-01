@@ -3,8 +3,7 @@
 ### Synopsis
 
 Web Speech API does not define the capability to capture the audio output
-of `window.speechSyntehsis.speak()` to a `MediaStream` or `ArrayBuffer` 
-([`MediaStream`, `ArrayBuffer`, `Blob` audio result from speak() for recording?](https://lists.w3.org/Archives/Public/public-speech-api/2017Jun/0000.html)), 
+of `window.speechSyntehsis.speak()` ([`MediaStream`, `ArrayBuffer`, `Blob` audio result from speak() for recording?](https://lists.w3.org/Archives/Public/public-speech-api/2017Jun/0000.html)), 
 and is not integrated with Web Audio API ([web audio api connected to speech api #1764](https://github.com/WebAudio/web-audio-api/issues/1764)).
 
 Use Transferable Streams ([Transferable Streams Explained](https://github.com/whatwg/streams/blob/main/transferable-streams-explainer.md), [Transferable objects](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Transferable_objects), [Feature: Streams API: transferable streams](https://chromestatus.com/feature/5298733486964736)), 
