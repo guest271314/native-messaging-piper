@@ -15,7 +15,7 @@ Native Messaging ([Chrome Developers](https://developer.chrome.com/docs/extensio
 , [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Native_messaging)
 , [Microsoft Edge Developer documentation](https://learn.microsoft.com/en-us/microsoft-edge/extensions-chromium/developer-guide/native-messaging)
 , [Messaging between the app and JavaScript in a Safari web extension](https://developer.apple.com/documentation/safariservices/messaging-between-the-app-and-javascript-in-a-safari-web-extension)), write the data to a `MediaStreamTrackGenerator` for the
-capability to play back share the stream to speakers or headphones, record,
+capability to play back, and/or share the stream to speakers or headphones, record,
 and with peers over a WebRTC `RTCPeerConnection` or `RTCDataChannel` ([WebRTC: Real-Time Communication in Browsers](https://www.w3.org/TR/webrtc/)).
 
 `background-aw.js` is a Web Audio API [`AudioWorklet`](https://webaudio.github.io/web-audio-api/#AudioWorklet) version of `background.js` Media Capture Transform `MediaStreamTrackGenerator` version, where Web Audio API is also used.
